@@ -116,13 +116,6 @@ curl http://127.0.0.1:8080
 deactivate
 ```
 
-### Use docker for develop
-
-```bash
-BUILDKIT_PROGRESS=plain docker build --build-arg BUILD_IMAGE='python:3.12-alpine' -t cf:1.0.0 .
-docker run -p 8080:8080 cf:1.0.0
-```
-
 ###  Start application in debug mode
 
 ```bash
