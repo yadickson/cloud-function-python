@@ -1,0 +1,195 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = [ "poetry-core" ]
+
+[project]
+name = "cloud-function-python"
+version = "1.0.0"
+description = "Move plo file from sftp to other sftp server"
+readme = "README.md"
+authors = [
+    { email = "yadickson@gmail.cl", name = "Yadickson Soto" },
+]
+requires-python = ">=3.12.0,<3.13.0"
+classifiers = [
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "dacite2>=2,<3",
+    "emoji>=2.15,<3",
+    "flask>=3.1.2,<4",
+    "functions-framework>=3.9.2,<4",
+    "google-cloud-logging>=3.12.1,<4",
+    "google-cloud-secret-manager>=2.26,<3",
+    "injector>=0.24,<1",
+    "marshmallow>=4.2.1,<5",
+    "paramiko>=3,<4",
+    "pysftp>=0.2.9,<1",
+    "python-dotenv>=1.0.1,<2",
+    "python-gnupg>=0.5.6,<1",
+    "pytz>=2025.2",
+]
+optional-dependencies.dev = [
+    "delete-cli>=2,<3",
+    "poethepoet>=0.35,<1",
+    "poetry>=2,<3",
+    "poetry-plugin-export>=1.8,<2",
+]
+optional-dependencies.lint = [
+    "autoflake>=2.3.1,<3",
+    "black>=24.3,<25",
+    "flake8>=7.1.1,<8",
+    "flake8-pyproject>=1.2.3,<2",
+    "flake8-quotes>=3.4,<4",
+    "isort>=5.13.2,<6",
+    "mypy>=1.11.2,<2",
+    "pylint>=3.3.8,<4",
+    "pyproject-fmt>=2.12.1,<3",
+    "ruff>=0.13.3,<1",
+]
+optional-dependencies.test = [
+    "autofaker>=1.0.19,<2",
+    "coverage>=7.4.4,<8",
+    "faker>=28.4.1,<29",
+    "mutmut>=3.4,<4",
+    "parameterized>=0.9,<1",
+    "pytest>=8.1.1,<9",
+    "pytest-cov>=7,<8",
+]
+
+[tool.poetry]
+package-mode = true
+packages = [
+    { include = "app" },
+    { include = "main.py" },
+]
+
+[tool.ruff]
+line-length = 150
+indent-width = 4
+format.indent-style = "space"
+format.quote-style = "double"
+format.line-ending = "auto"
+format.skip-magic-trailing-comma = false
+lint.select = [ "E", "F", "W" ]
+lint.ignore = []
+lint.fixable = [ "ALL" ]
+lint.unfixable = []
+
+[tool.isort]
+combine_as_imports = "true"
+force_grid_wrap = 0
+include_trailing_comma = "true"
+known_first_party = "app"
+line_length = 150
+multi_line_output = 3
+
+[tool.flake8]
+ignore = [ "E203" ]
+inline-quotes = '"'
+max-line-length = 150
+
+[tool.pyproject-fmt]
+collapse_tables = [ "project.urls" ]
+column_width = 250
+generate_python_version_classifiers = true
+indent = 4
+keep_full_version = false
+max_supported_python = "3.12"
+table_format = "short"
+
+[tool.pytest]
+ini_options.addopts = [ "--import-mode=importlib" ]
+ini_options.norecursedirs = [ ".venv", "mutants" ]
+
+[tool.coverage]
+run.branch = true
+run.source = [ "app" ]
+report.exclude_lines = [ "@abstractmethod" ]
+report.fail_under = 100
+report.show_missing = true
+report.skip_empty = true
+
+[tool.mypy]
+disable_error_code = [ "import-untyped", "type-abstract" ]
+disallow_untyped_defs = true
+follow_imports = "silent"
+ignore_missing_imports = true
+namespace_packages = true
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.autoflake]
+check = false
+imports = [ "urllib3" ]
+remove-all-unused-imports = true
+remove-duplicate-keys = true
+
+[tool.mutmut]
+paths_to_mutate = [ "app/" ]
+pytest_add_cli_args_test_selection = [ "tests/" ]
+threshold = 100
+
+[tool.poe]
+tasks.all = { help = "Run all steps", sequence = [
+    "clean",
+    "format",
+    "lint",
+    "build",
+    "duplicated",
+    "test",
+    "test:coverage",
+    "test:mutation",
+] }
+tasks.build = { help = "Build project", shell = "poetry build" }
+tasks.clean = { help = "Clean project directory", sequence = [
+    "clean:coverage",
+    "clean:dist",
+    "clean:mutants",
+    "clean:mutmut",
+    "clean:reports",
+    "clean:requirements",
+    "clean:empty",
+] }
+tasks."clean:coverage" = { help = "Clean coverage directory", shell = "del .coverage" }
+tasks."clean:dist" = { help = "Clean dist directory", shell = "del dist" }
+tasks."clean:mutants" = { help = "Clean mutants directory", shell = "del mutants" }
+tasks."clean:mutmut" = { help = "Clean mutmut cache directory", shell = "del .mutmut-cache" }
+tasks."clean:reports" = { help = "Clean reports directory", shell = "del reports" }
+tasks."clean:requirements" = { help = "Clean requirements file", shell = "del requirements.txt" }
+tasks."clean:empty" = { help = "Clean all files from trash", shell = "del --empty" }
+tasks.duplicated = { help = "Check duplicate code project", shell = "pylint --disable=all --enable=duplicate-code --recursive=y main.py app" }
+tasks.format = { help = "Apply style into all project", sequence = [
+    "format:toml",
+    "format:autoflake",
+    "format:isort",
+    "format:black",
+    "format:ruff",
+] }
+tasks."format:toml" = { help = "Apply style to pyproject.toml", shell = "pyproject-fmt pyproject.toml" }
+tasks."format:autoflake" = { help = "Apply style from autoflake", shell = "autoflake --in-place -r main.py app tests" }
+tasks."format:isort" = { help = "Apply style from isort", shell = "isort main.py app tests" }
+tasks."format:black" = { help = "Apply style from black", shell = "black main.py app tests --line-length=150 --preview" }
+tasks."format:ruff" = { help = "Apply style from ruff", shell = "ruff format main.py app tests && ruff check main.py app tests --fix" }
+tasks.lint = { help = "Check style code project", sequence = [
+    "lint:flake",
+    "lint:mypy",
+    "lint:ruff",
+] }
+tasks."lint:flake" = { help = "Check style code from flake", shell = "flake8 main.py app tests" }
+tasks."lint:mypy" = { help = "Check style code from mypy", shell = "mypy main.py app tests" }
+tasks."lint:ruff" = { help = "Check style code from ruff", shell = "ruff check main.py app tests" }
+tasks.requirements = { help = "Create requirements.txt file", shell = "poetry export --without-hashes --output requirements.txt" }
+tasks.start = { help = "Run development project", shell = "functions-framework --target execute --source main.py --signature-type http --debug" }
+tasks.test = { help = "Run all unit test", shell = "pytest -o log_cli=true --no-header --junitxml=reports/xunit.xml --color=yes" }
+tasks."test:coverage" = { help = "Run coverage test", shell = "coverage run -m pytest --cov-report term --cov-report html:reports/coverage --cov-report lcov:reports/coverage/lcov.info --cov-report xml:reports/coverage/coverage.xml --cov=app tests" }
+tasks."test:mutation" = { help = "Run mutation test", sequence = [
+    "test:mutation:run",
+    "test:mutation:results",
+    "test:mutation:check",
+] }
+tasks."test:mutation:results" = { help = "Run mutation results", shell = "mutmut results" }
+tasks."test:mutation:check" = { help = "Run mutation check", shell = "mutmut results | python -c \"import sys; sys.exit(len([l for l in sys.stdin if ' survived' in l]))\"" }
+tasks."test:mutation:run" = { help = "Run mutation run", shell = "mutmut run" }

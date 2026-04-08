@@ -1,0 +1,2 @@
+class MapperException(Exception):
+    pass
