@@ -183,7 +183,7 @@ tasks."lint:mypy" = { help = "Check style code from mypy", shell = "mypy main.py
 tasks."lint:ruff" = { help = "Check style code from ruff", shell = "ruff check main.py app tests" }
 tasks.requirements = { help = "Create requirements.txt file", shell = "poetry export --without-hashes --output requirements.txt" }
 tasks.start = { help = "Run development project", shell = "functions-framework --target execute --source main.py --signature-type http --debug" }
-tasks.test = { help = "Run all unit test", shell = "pytest -o log_cli=true --no-header --junitxml=reports/xunit.xml --color=yes" }
+tasks.test = { help = "Run all unit test", shell = "pytest -o log_cli=true --no-header --junitxml=reports/test-results.xml --color=yes" }
 tasks."test:coverage" = { help = "Run coverage test", shell = "coverage run -m pytest --cov-report term --cov-report html:reports/coverage --cov-report lcov:reports/coverage/lcov.info --cov-report xml:reports/coverage/coverage.xml --cov=app tests" }
 tasks."test:mutation" = { help = "Run mutation test", sequence = [
     "test:mutation:run",
