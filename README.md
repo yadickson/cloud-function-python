@@ -1,5 +1,6 @@
 # [cloud-function-python]()
 
+![version](https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fgist.githubusercontent.com%2Fyadickson%2F48c9e2094af5dbd32077ce69108c2b0e%2Fraw%2Fcloud-function-python-version.json)
 ![license](https://img.shields.io/github/license/yadickson/cloud-function-python?style=flat-square)
 [![build](https://img.shields.io/github/actions/workflow/status/yadickson/cloud-function-python/ci.yml?branch=main&style=flat-square)](https://github.com/yadickson/cloud-function-python/actions/workflows/ci.yml)
 ![tests](https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fgist.githubusercontent.com%2Fyadickson%2F48c9e2094af5dbd32077ce69108c2b0e%2Fraw%2Fcloud-function-python-junit-tests.json)
